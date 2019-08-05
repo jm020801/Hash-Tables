@@ -15,15 +15,19 @@ class Pair:
 # '''
 class BasicHashTable:
     def __init__(self, capacity):
-        pass
+        self.capacity = capacity
+        self.storage = [None] * capacity
 
 
 # '''
 # Fill this in.
 # Research and implement the djb2 hash function
 # '''
-def hash(string, max):
-    pass
+def hash(string):
+    hash = 5381
+    for x in string:
+        hash = (((hash << 5) + hash) + ord(x)) & 0xFFFFFFFF
+    return hash
 
 
 # '''
@@ -32,7 +36,25 @@ def hash(string, max):
 # If you are overwriting a value with a different key, print a warning.
 # '''
 def hash_table_insert(hash_table, key, value):
-    pass
+    # Get the hash version of key
+    key_hash = hash(key)
+    # Make a new pair using the key, value pair that was passed into the function
+    new_pair = Pair(key, value)
+    # Get the index by doing key_hash modulo hash_table.capacity
+    index = key_hash % hash_table.capacity
+    # If the index already has a pair associated with it, see if the keys match.
+    if hash_table.storage[index] != None:
+        # If the keys do not match, print a warning and do nothing
+        if key == hash_table.storage[index].key:
+            print(
+                f"Collision detected for {key} and {hash_table.storage[index].key}")
+        # If the keys do match, update the value
+        else:
+            hash_table.storage[index].value = value
+    # Else
+    else:
+        # insert the pair into the appropriate index
+        hash_table.storage[index] = new_pair
 
 
 # '''
@@ -41,7 +63,17 @@ def hash_table_insert(hash_table, key, value):
 # If you try to remove a value that isn't there, print a warning.
 # '''
 def hash_table_remove(hash_table, key):
-    pass
+    # Get the hash version of the key
+    hash_key = hash(key)
+    # Get the index by modulo-ing the key by the ht's capacity
+    index = hash_key % hash_table.capacity
+    # If there is a value other than None at index
+    if hash_table.storage[index] != None:
+        # The value is set to None
+        hash_table.storage[index] = None
+    # Else, print a warning
+    else:
+        print(f"{key} not found in hash table, cannot be removed.")
 
 
 # '''
@@ -50,7 +82,18 @@ def hash_table_remove(hash_table, key):
 # Should return None if the key is not found.
 # '''
 def hash_table_retrieve(hash_table, key):
-    pass
+    # Get the hash version of the key
+    hash_key = hash(key)
+    # Get the index by modulo-ing the key by the ht's capacity
+    index = hash_key % hash_table.capacity
+    # If index is not equal to None
+    if hash_table.storage[index] is not None:
+        # If key is equal to key that we are looking up
+        if hash_table.storage[index].key == key:
+            # Return value
+            return hash_table.storage[index].value
+    # Return none
+    return None
 
 
 def Testing():
